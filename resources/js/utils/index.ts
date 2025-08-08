@@ -11,3 +11,11 @@ export const formatDateToHumanReadable = (date: string): string => {
         minute: '2-digit',
     });
 };
+
+export const formatDateToHumanReadableWithoutTime = (date: string): string => {
+    return new Date(date).toLocaleDateString('id-ID', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    });
+};

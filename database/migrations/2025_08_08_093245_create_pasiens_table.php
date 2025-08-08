@@ -22,7 +22,6 @@ return new class extends Migration
             $table->text("alamat");
             $table->string("no_hp");
             $table->string("gol_darah");
-            $table->enum("status_perkawinan", [Pasien::KAWIN, Pasien::BELUM_KAWIN]);
             $table->timestamps();
         });
     }

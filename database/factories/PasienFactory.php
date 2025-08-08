@@ -26,7 +26,6 @@ class PasienFactory extends Factory
             'alamat' => fake()->address(),
             'no_hp' => fake()->phoneNumber(),
             'gol_darah' => fake()->randomElement(['A', 'B', 'AB', 'O']),
-            'status_perkawinan' => fake()->randomElement([Pasien::KAWIN, Pasien::BELUM_KAWIN]),
         ];
     }
 }

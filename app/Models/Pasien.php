@@ -14,8 +14,7 @@ class Pasien extends Model
     public const LAKI_LAKI = 'L';
     public const PEREMPUAN = 'P';
 
-    public const KAWIN = 'Kawin';
-    public const BELUM_KAWIN = 'Belum Kawin';
+
 
     public function kunjungan()
     {
