@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class RekamMedis extends Model
+{
+    /** @use HasFactory<\Database\Factories\RekamMedisFactory> */
+    use HasFactory;
+    protected $guarded = [];
+
+    public function kunjungan()
+    {
+        return $this->belongsTo(Kunjungan::class);
+    }
+
+    public function petugas()
+    {
+        return $this->belongsTo(Petugas::class);
+    }
+}
