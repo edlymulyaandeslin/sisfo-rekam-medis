@@ -48,6 +48,140 @@ export default function Index({ rekammedis }: { rekammedis: PaginatedData<RekamM
         });
     };
 
+    const handlePrint = (rkm: RekamMedis) => {
+        const printWindow = window.open('', '_blank');
+        if (printWindow) {
+            printWindow.document.write(`
+        <html>
+            <head>
+                <title>Surat Rekam Medis</title>
+                <style>
+                    body {
+                        font-family: 'Times New Roman', serif;
+                        padding: 40px 60px;
+                        background-color: #fff;
+                        color: #000;
+                        line-height: 1.6;
+                        font-size: 12pt;
+                    }
+                    .kop-surat {
+                        display: flex;
+                        align-items: center;
+                        border-bottom: 3px solid #000;
+                        padding-bottom: 10px;
+                        margin-bottom: 20px;
+                    }
+                    .kop-logo {
+                        width: 80px;
+                        height: 80px;
+                        margin-right: 15px;
+                    }
+                    .kop-teks {
+                        flex: 1;
+                        text-align: center;
+                    }
+                    .kop-teks h2 {
+                        margin: 0;
+                        font-size: 18pt;
+                        text-transform: uppercase;
+                    }
+                    .kop-teks p {
+                        margin: 2px 0;
+                        font-size: 10pt;
+                    }
+                    .nomor-surat {
+                        margin-bottom: 20px;
+                        font-size: 11pt;
+                    }
+                    .tanggal {
+                        text-align: right;
+                        margin-bottom: 20px;
+                    }
+                    .isi {
+                        text-align: justify;
+                        margin-top: 10px;
+                    }
+                    .data-pasien {
+                        margin: 15px 0;
+                        padding: 10px;
+                        border: 1px solid #000;
+                        background: #f9f9f9;
+                        font-size: 11pt;
+                    }
+                    .data-pasien div {
+                        margin: 4px 0;
+                    }
+                    .ttd {
+                        margin-top: 50px;
+                        text-align: right;
+                    }
+                    .ttd .nama {
+                        margin-top: 80px;
+                        font-weight: bold;
+                        text-decoration: underline;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="kop-surat">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Medical_icon.svg/120px-Medical_icon.svg.png"
+                         alt="Logo Klinik" class="kop-logo">
+                    <div class="kop-teks">
+                        <h2>PUSKESMAS RAMBAH</h2>
+                        <p>Jl. Contoh No.123, Pasir Pengaraian, Rokan Hulu, Riau</p>
+                        <p>Telp: (022) 12345678 | Email: info@puskesmasrambah.com</p>
+                        <p><strong>SURAT REKAM MEDIS</strong></p>
+                    </div>
+                </div>
+
+                <div class="nomor-surat">
+                    Nomor: RM-${new Date().getFullYear()}/${String(rkm.kunjungan.id).padStart(4, '0')}
+                </div>
+
+                <div class="tanggal">
+                    Pasir Pengaraian, ${new Date().toLocaleDateString('id-ID')}
+                </div>
+
+                <div class="isi">
+                    Kepada Yth,<br>
+                    <strong>Bapak/Ibu Terkait</strong><br><br>
+
+                    Dengan hormat,<br>
+                    Bersama ini kami sampaikan informasi rekam medis pasien sebagai berikut:
+                </div>
+
+                <div class="data-pasien">
+                    <div>Nama Pasien: <strong>${rkm.kunjungan.pasien.nama}</strong></div>
+                    <div>Poli: <strong>${rkm.kunjungan.poli.nama_poli}</strong></div>
+                    <div>Petugas/Dokter: <strong>${rkm.kunjungan.petugas.user.name}</strong></div>
+                </div>
+
+                <div class="isi">
+                    Keluhan utama yang disampaikan pasien adalah: <em>${rkm.kunjungan.keluhan_utama}</em>.<br>
+                    Berdasarkan pemeriksaan yang dilakukan, pasien didiagnosa dengan: <em>${rkm.diagnosa}</em>.<br>
+                    Adapun obat yang diberikan: <em>${rkm.obat}</em>.<br>
+                    Catatan tambahan: ${rkm.catatan}.<br><br>
+
+                    Demikian surat rekam medis ini kami buat untuk dapat digunakan sebagaimana mestinya.
+                </div>
+
+                <div class="ttd">
+                    Hormat kami,<br>
+                    <strong>Dokter/Petugas</strong>
+                    <div class="nama">${rkm.kunjungan.petugas.user.name}</div>
+                </div>
+
+                <script>
+                    window.print();
+                    window.onafterprint = function() { window.close(); }
+                </script>
+            </body>
+        </html>
+    `);
+            printWindow.document.close();
+        }
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Data Rekam Medis" />
@@ -88,7 +222,7 @@ export default function Index({ rekammedis }: { rekammedis: PaginatedData<RekamM
                         },
                         {
                             title: 'Petugas / Dokter',
-                            render: (rkm) => <span className="text-sm font-medium capitalize">{rkm.petugas.user.name}</span>,
+                            render: (rkm) => <span className="text-sm font-medium capitalize">{rkm.kunjungan.petugas.user.name}</span>,
                         },
                         {
                             title: 'Keluhan Utama',
@@ -103,6 +237,12 @@ export default function Index({ rekammedis }: { rekammedis: PaginatedData<RekamM
                             className: 'text-right',
                             render: (rkm) => (
                                 <div className="flex justify-end gap-2">
+                                    <button
+                                        onClick={() => handlePrint(rkm)}
+                                        className="inline-flex cursor-pointer items-center rounded-md bg-green-100 px-3 py-1 text-xs font-medium text-green-700 hover:bg-green-200 dark:bg-green-900 dark:text-green-300 dark:hover:bg-green-800"
+                                    >
+                                        Cetak
+                                    </button>
                                     <button
                                         onClick={() => {
                                             setSelectedRekamMedis(rkm);
@@ -135,7 +275,7 @@ export default function Index({ rekammedis }: { rekammedis: PaginatedData<RekamM
             </div>
 
             {/* Modal Detail RekamMedis (baru diimplementasikan dari UserIndex) */}
-            <Modal isOpen={openDetailModal} onClose={() => setOpenDetailModal(false)} title="Detail RekamMedis" size="lg">
+            <Modal isOpen={openDetailModal} onClose={() => setOpenDetailModal(false)} title="Detail Rekam Medis" size="lg">
                 {selectedRekamMedis && (
                     <div className="space-y-6 rounded-lg bg-white py-6 text-sm text-gray-700 dark:bg-zinc-900 dark:text-gray-200">
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -149,7 +289,7 @@ export default function Index({ rekammedis }: { rekammedis: PaginatedData<RekamM
                             </div>
                             <div className="flex flex-col">
                                 <span className="text-xs text-gray-500 dark:text-gray-400">Petugas / Dokter</span>
-                                <span className="text-base font-semibold">{selectedRekamMedis.petugas.user.name}</span>
+                                <span className="text-base font-semibold">{selectedRekamMedis.kunjungan.petugas.user.name}</span>
                             </div>
                             <div className="flex flex-col">
                                 <span className="text-xs text-gray-500 dark:text-gray-400">Keluhan Utama</span>

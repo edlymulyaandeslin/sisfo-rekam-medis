@@ -1,5 +1,5 @@
 import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem, Kunjungan, Petugas, RekamMedis } from '@/types';
+import type { BreadcrumbItem, Kunjungan, RekamMedis } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 
 import { Button } from '@/components/ui/button';
@@ -13,10 +13,9 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Edit', href: '/rekam-medis/edit' },
 ];
 
-export default function Edit({ rekmed, kunjungan, petugas }: { rekmed: RekamMedis; kunjungan: Kunjungan[]; petugas: Petugas[] }) {
+export default function Edit({ rekmed, kunjungan }: { rekmed: RekamMedis; kunjungan: Kunjungan[] }) {
     const { data, setData, processing, put, errors } = useForm({
         kunjungan_id: String(rekmed.kunjungan_id) || '',
-        petugas_id: String(rekmed.petugas_id) || '',
         tekanan_darah: rekmed.tekanan_darah || '',
         suhu: String(rekmed.suhu) || '',
         diagnosa: rekmed.diagnosa || '',
@@ -37,7 +36,7 @@ export default function Edit({ rekmed, kunjungan, petugas }: { rekmed: RekamMedi
             <section className="w-full px-6 py-10 md:px-12 lg:px-20">
                 <div className="mb-10">
                     <h1 className="text-4xl font-bold">Edit Rekam Medis</h1>
-                    <p className="mt-2 text-base text-muted-foreground">Ubah informasi kunjungan pada form berikut.</p>
+                    <p className="mt-2 text-base text-muted-foreground">Ubah informasi rekam medis pada form berikut.</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-8 md:grid-cols-2">
@@ -57,24 +56,6 @@ export default function Edit({ rekmed, kunjungan, petugas }: { rekmed: RekamMedi
                             </SelectContent>
                         </Select>
                         {errors.kunjungan_id && <p className="mt-1 text-sm text-red-500">{errors.kunjungan_id}</p>}
-                    </div>
-
-                    {/* petugas_id */}
-                    <div>
-                        <Label htmlFor="petugas_id">Petugas / Dokter</Label>
-                        <Select value={data.petugas_id} onValueChange={(value) => setData('petugas_id', value)}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Pilih Petugas/Dokter" />
-                            </SelectTrigger>
-                            <SelectContent className="max-h-60 overflow-y-auto">
-                                {petugas.map((ptgs) => (
-                                    <SelectItem key={ptgs.id} value={String(ptgs.id)}>
-                                        {ptgs.user.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                        {errors.petugas_id && <p className="mt-1 text-sm text-red-500">{errors.petugas_id}</p>}
                     </div>
 
                     {/* tekanan_darah */}

@@ -15,9 +15,4 @@ class RekamMedis extends Model
     {
         return $this->belongsTo(Kunjungan::class);
     }
-
-    public function petugas()
-    {
-        return $this->belongsTo(Petugas::class);
-    }
 }

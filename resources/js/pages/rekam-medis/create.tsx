@@ -1,5 +1,5 @@
 import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem, Kunjungan, Petugas } from '@/types';
+import type { BreadcrumbItem, Kunjungan } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 
 import { Button } from '@/components/ui/button';
@@ -13,10 +13,9 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Create', href: '/rekam-medis/create' },
 ];
 
-export default function Create({ kunjungan, petugas }: { kunjungan: Kunjungan[]; petugas: Petugas[] }) {
+export default function Create({ kunjungan }: { kunjungan: Kunjungan[] }) {
     const { data, setData, post, processing, errors } = useForm({
         kunjungan_id: '',
-        petugas_id: '',
         tekanan_darah: '',
         suhu: '',
         diagnosa: '',
@@ -57,24 +56,6 @@ export default function Create({ kunjungan, petugas }: { kunjungan: Kunjungan[];
                             </SelectContent>
                         </Select>
                         {errors.kunjungan_id && <p className="mt-1 text-sm text-red-500">{errors.kunjungan_id}</p>}
-                    </div>
-
-                    {/* petugas_id */}
-                    <div>
-                        <Label htmlFor="petugas_id">Petugas / Dokter</Label>
-                        <Select value={data.petugas_id} onValueChange={(value) => setData('petugas_id', value)}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Pilih Petugas/Dokter" />
-                            </SelectTrigger>
-                            <SelectContent className="max-h-60 overflow-y-auto">
-                                {petugas.map((ptgs) => (
-                                    <SelectItem key={ptgs.id} value={String(ptgs.id)}>
-                                        {ptgs.user.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                        {errors.petugas_id && <p className="mt-1 text-sm text-red-500">{errors.petugas_id}</p>}
                     </div>
 
                     {/* tekanan_darah */}

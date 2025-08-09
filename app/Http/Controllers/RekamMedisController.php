@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Inertia\Inertia;
-use App\Models\Petugas;
 use App\Models\Kunjungan;
 use App\Models\RekamMedis;
 use Illuminate\Http\Request;
@@ -15,12 +14,12 @@ class RekamMedisController extends Controller
      */
     public function index(Request $request)
     {
-        $query = RekamMedis::with(['kunjungan.pasien', 'kunjungan.poli', 'petugas.user']);
+        $query = RekamMedis::with(['kunjungan.pasien', 'kunjungan.poli', 'kunjungan.petugas.user']);
 
         if ($search = $request->search) {
             $query->whereHas('kunjungan.pasien', function ($q) use ($search) {
                 $q->where("nama", "like", "%{$search}%");
-            })->orWhereHas('petugas.user', function ($q) use ($search) {
+            })->orWhereHas('kunjungan.petugas.user', function ($q) use ($search) {
                 $q->where("name", "like", "%{$search}%");
             });
         }
@@ -38,12 +37,10 @@ class RekamMedisController extends Controller
      */
     public function create()
     {
-        $kunjungan = Kunjungan::with(['pasien', 'poli'])->latest()->get();
-        $petugas = Petugas::with('user')->latest()->get();
+        $kunjungan = Kunjungan::with(['pasien', 'poli'])->whereDate('tanggal_kunjungan', now())->latest()->get();
 
         return Inertia::render("rekam-medis/create", [
             'kunjungan' => $kunjungan,
-            'petugas' => $petugas
         ]);
     }
 
@@ -54,7 +51,6 @@ class RekamMedisController extends Controller
     {
         $validate_data = $request->validate([
             "kunjungan_id" => "required",
-            "petugas_id" => "required",
             "tekanan_darah" => "required",
             "suhu" => "required|numeric",
             "diagnosa" => "required",
@@ -82,13 +78,11 @@ class RekamMedisController extends Controller
     {
         $rekmed = RekamMedis::findOrFail($id);
         $kunjungan = Kunjungan::with(['pasien', 'poli'])->latest()->get();
-        $petugas = Petugas::with('user')->latest()->get();
 
 
         return Inertia::render("rekam-medis/edit", [
             'rekmed' => $rekmed,
             'kunjungan' => $kunjungan,
-            'petugas' => $petugas
         ]);
     }
 
@@ -101,7 +95,6 @@ class RekamMedisController extends Controller
 
         $rules = [
             "kunjungan_id" => "required",
-            "petugas_id" => "required",
             "tekanan_darah" => "required",
             "suhu" => "required|numeric",
             "diagnosa" => "required",
