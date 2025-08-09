@@ -48,6 +48,124 @@ export default function Index({ kunjungan }: { kunjungan: PaginatedData<Kunjunga
         });
     };
 
+    const handlePrint = (kunjung: Kunjungan) => {
+        const printContent = `
+            <html>
+            <head>
+                <title>Cetak Kunjungan</title>
+                <style>
+                    @page {
+                        size: A4;
+                        margin: 2.54cm;
+                    }
+                    body {
+                        font-family: 'Times New Roman', serif;
+                        line-height: 1.6;
+                        color: #000;
+                    }
+                    .header {
+                        text-align: center;
+                        border-bottom: 2px solid #000;
+                        padding-bottom: 10px;
+                        margin-bottom: 20px;
+                    }
+                    .header h2 {
+                        margin: 0;
+                        font-size: 20px;
+                        font-weight: bold;
+                    }
+                    .header p {
+                        margin: 0;
+                        font-size: 14px;
+                    }
+                    .title {
+                        text-align: center;
+                        margin-bottom: 20px;
+                        text-transform: uppercase;
+                        font-weight: bold;
+                        font-size: 16px;
+                        text-decoration: underline;
+                    }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-bottom: 30px;
+                    }
+                    td {
+                        padding: 6px 8px;
+                        vertical-align: top;
+                    }
+                    .footer {
+                        margin-top: 40px;
+                        text-align: right;
+                        font-size: 14px;
+                    }
+                    .signature {
+                        margin-top: 60px;
+                        text-align: right;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h2>PUSKESMAS RAMBAH</h2>
+                    <p>Jl. Contoh No. 123, Pasir Pengaraian, Rokan Hulu, Riau</p>
+                    <p>Telp: (022) 123-4567</p>
+                </div>
+
+                <div class="title">Surat Keterangan Kunjungan</div>
+
+                <table>
+                    <tr>
+                        <td style="width: 35%;">Nomor Kunjungan</td>
+                        <td>: ${kunjung.id}</td>
+                    </tr>
+                    <tr>
+                        <td>Nama Pasien</td>
+                        <td>: ${kunjung.pasien.nama}</td>
+                    </tr>
+                    <tr>
+                        <td>Poli</td>
+                        <td>: ${kunjung.poli.nama_poli}</td>
+                    </tr>
+                    <tr>
+                        <td>Tanggal Kunjungan</td>
+                        <td>: ${formatDateToHumanReadableWithoutTime(kunjung.tanggal_kunjungan)}</td>
+                    </tr>
+                    <tr>
+                        <td>Keluhan Utama</td>
+                        <td>: ${kunjung.keluhan_utama}</td>
+                    </tr>
+                </table>
+
+                <p>Demikian surat keterangan ini dibuat untuk digunakan sebagaimana mestinya.</p>
+
+                <div class="footer">
+                    Pasir Pengaraian, ${new Date().toLocaleDateString('id-ID')}
+                </div>
+
+                <div class="signature">
+                    ___________________________<br>
+                    ${kunjung.petugas.user.name}
+                </div>
+
+                <script>
+                    window.onload = function() {
+                        window.print();
+                        window.onafterprint = function() { window.close(); }
+                    }
+                </script>
+            </body>
+            </html>
+            `;
+
+        const printWindow = window.open('', '_blank');
+        if (printWindow) {
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+        }
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Data Kunjungan" />
@@ -108,6 +226,13 @@ export default function Index({ kunjungan }: { kunjungan: PaginatedData<Kunjunga
                             render: (kunjung) => (
                                 <div className="flex justify-end gap-2">
                                     <button
+                                        onClick={() => handlePrint(kunjung)}
+                                        className="inline-flex cursor-pointer items-center rounded-md bg-green-100 px-3 py-1 text-xs font-medium text-green-700 hover:bg-green-200 dark:bg-green-900 dark:text-green-300 dark:hover:bg-green-800"
+                                    >
+                                        Cetak
+                                    </button>
+
+                                    <button
                                         onClick={() => {
                                             setSelectedKunjungan(kunjung);
                                             setOpenDetailModal(true);
@@ -160,6 +285,10 @@ export default function Index({ kunjungan }: { kunjungan: PaginatedData<Kunjunga
                             <div className="flex flex-col">
                                 <span className="text-xs text-gray-500 dark:text-gray-400">Keluhan Utama</span>
                                 <span className="text-base font-semibold">{selectedKunjungan.keluhan_utama}</span>
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-xs text-gray-500 dark:text-gray-400">Petugas / Dokter</span>
+                                <span className="text-base font-semibold">{selectedKunjungan.petugas.user.name}</span>
                             </div>
                             <div className="flex flex-col">
                                 <span className="text-xs text-gray-500 dark:text-gray-400">Dibuat Pada</span>

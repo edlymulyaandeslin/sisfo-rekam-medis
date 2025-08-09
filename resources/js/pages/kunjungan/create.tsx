@@ -1,21 +1,23 @@
 import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem, Pasien, Poli } from '@/types';
+import type { BreadcrumbItem, Pasien, Petugas, Poli } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@headlessui/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Kunjungan', href: '/kunjungan' },
     { title: 'Create', href: '/kunjungan/create' },
 ];
 
-export default function Create({ pasiens, polis }: { pasiens: Pasien[]; polis: Poli[] }) {
+export default function Create({ pasiens, polis, petugas }: { pasiens: Pasien[]; polis: Poli[]; petugas: Petugas[] }) {
     const { data, setData, post, processing, errors } = useForm({
         pasien_id: '',
         poli_id: '',
+        petugas_id: '',
         tanggal_kunjungan: '',
         keluhan_utama: '',
     });
@@ -72,6 +74,24 @@ export default function Create({ pasiens, polis }: { pasiens: Pasien[]; polis: P
                         {errors.poli_id && <p className="mt-1 text-sm text-red-500">{errors.poli_id}</p>}
                     </div>
 
+                    {/* petugas_id */}
+                    <div>
+                        <Label htmlFor="petugas_id">Petugas / Dokter</Label>
+                        <Select value={data.petugas_id} onValueChange={(value) => setData('petugas_id', value)}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Pilih Dokter" />
+                            </SelectTrigger>
+                            <SelectContent className="max-h-60 overflow-y-auto">
+                                {petugas.map((ptgs) => (
+                                    <SelectItem key={ptgs.id} value={String(ptgs.id)}>
+                                        {ptgs.user.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        {errors.petugas_id && <p className="mt-1 text-sm text-red-500">{errors.petugas_id}</p>}
+                    </div>
+
                     {/* tanggal_kunjungan */}
                     <div>
                         <Label htmlFor="tanggal_kunjungan">Tanggal Kunjungan</Label>
@@ -88,7 +108,12 @@ export default function Create({ pasiens, polis }: { pasiens: Pasien[]; polis: P
                     {/* keluhan_utama */}
                     <div>
                         <Label htmlFor="keluhan_utama">Keluhan Utama</Label>
-                        <Input id="keluhan_utama" value={data.keluhan_utama} onChange={(e) => setData('keluhan_utama', e.target.value)} />
+                        <Textarea
+                            className="w-full rounded-lg border p-2"
+                            id="keluhan_utama"
+                            value={data.keluhan_utama}
+                            onChange={(e) => setData('keluhan_utama', e.target.value)}
+                        />
                         {errors.keluhan_utama && <p className="mt-1 text-sm text-red-500">{errors.keluhan_utama}</p>}
                     </div>
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Poli;
 use Inertia\Inertia;
 use App\Models\Pasien;
+use App\Models\Petugas;
 use App\Models\Kunjungan;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,7 @@ class KunjunganController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Kunjungan::with(['pasien', 'poli']);
+        $query = Kunjungan::with(['pasien', 'poli', 'petugas.user']);
 
         if ($search = $request->search) {
             $query->whereHas('pasien', function ($q) use ($search) {
@@ -40,10 +41,12 @@ class KunjunganController extends Controller
     {
         $pasiens = Pasien::latest()->get();
         $polis = Poli::latest()->get();
+        $petugas = Petugas::with('user')->latest()->get();
 
         return Inertia::render("kunjungan/create", [
             'pasiens' => $pasiens,
-            'polis' => $polis
+            'polis' => $polis,
+            'petugas' => $petugas
         ]);
     }
 
@@ -55,6 +58,7 @@ class KunjunganController extends Controller
         $validate_data = $request->validate([
             "pasien_id" => "required",
             "poli_id" => "required",
+            "petugas_id" => "required",
             "tanggal_kunjungan" => "required|date",
             "keluhan_utama" => "required",
         ]);
@@ -80,11 +84,13 @@ class KunjunganController extends Controller
         $kunjung = Kunjungan::findOrFail($id);
         $pasiens = Pasien::latest()->get();
         $polis = Poli::latest()->get();
+        $petugas = Petugas::with('user')->latest()->get();
 
         return Inertia::render("kunjungan/edit", [
             'kunjung' => $kunjung,
             'pasiens' => $pasiens,
-            'polis' => $polis
+            'polis' => $polis,
+            'petugas' => $petugas
         ]);
     }
 
@@ -98,6 +104,7 @@ class KunjunganController extends Controller
         $rules = [
             "pasien_id" => "required",
             "poli_id" => "required",
+            "petugas_id" => "required",
             "tanggal_kunjungan" => "required|date",
             "keluhan_utama" => "required",
         ];

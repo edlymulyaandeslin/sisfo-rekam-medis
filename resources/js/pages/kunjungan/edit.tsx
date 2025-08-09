@@ -1,5 +1,5 @@
 import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem, Kunjungan, Pasien, Poli } from '@/types';
+import type { BreadcrumbItem, Kunjungan, Pasien, Petugas, Poli } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 
 import { Button } from '@/components/ui/button';
@@ -12,10 +12,11 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Edit', href: '/kunjungan/edit' },
 ];
 
-export default function Edit({ kunjung, pasiens, polis }: { kunjung: Kunjungan; pasiens: Pasien[]; polis: Poli[] }) {
+export default function Edit({ kunjung, pasiens, polis, petugas }: { kunjung: Kunjungan; pasiens: Pasien[]; polis: Poli[]; petugas: Petugas[] }) {
     const { data, setData, processing, put, errors } = useForm({
         pasien_id: String(kunjung.pasien_id) || '',
         poli_id: String(kunjung.poli_id) || '',
+        petugas_id: String(kunjung.petugas_id) || '',
         tanggal_kunjungan: kunjung.tanggal_kunjungan || '',
         keluhan_utama: kunjung.keluhan_utama || '',
     });
@@ -71,6 +72,24 @@ export default function Edit({ kunjung, pasiens, polis }: { kunjung: Kunjungan; 
                             </SelectContent>
                         </Select>
                         {errors.poli_id && <p className="mt-1 text-sm text-red-500">{errors.poli_id}</p>}
+                    </div>
+
+                    {/* petugas_id */}
+                    <div>
+                        <Label htmlFor="petugas_id">Petugas / Dokter</Label>
+                        <Select value={data.petugas_id} onValueChange={(value) => setData('petugas_id', value)}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Pilih Dokter" />
+                            </SelectTrigger>
+                            <SelectContent className="max-h-60 overflow-y-auto">
+                                {petugas.map((ptgs) => (
+                                    <SelectItem key={ptgs.id} value={String(ptgs.id)}>
+                                        {ptgs.user.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        {errors.petugas_id && <p className="mt-1 text-sm text-red-500">{errors.petugas_id}</p>}
                     </div>
 
                     {/* tanggal_kunjungan */}

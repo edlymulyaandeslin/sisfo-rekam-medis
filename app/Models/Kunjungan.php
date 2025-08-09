@@ -20,4 +20,9 @@ class Kunjungan extends Model
     {
         return $this->belongsTo(Poli::class);
     }
+
+    public function petugas()
+    {
+        return $this->belongsTo(Petugas::class);
+    }
 }

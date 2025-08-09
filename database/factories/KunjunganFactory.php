@@ -19,6 +19,7 @@ class KunjunganFactory extends Factory
         return [
             'pasien_id' => mt_rand(1, 10), // Assuming you have 10 patients seeded
             'poli_id' => mt_rand(1, 4), // Assuming you have
+            'petugas_id' => mt_rand(1, 10), // Assuming you have 10 petugas seeded
             'tanggal_kunjungan' => fake()->dateTimeBetween('-1 month', 'now'),
             'keluhan_utama' => fake()->sentence(),
         ];

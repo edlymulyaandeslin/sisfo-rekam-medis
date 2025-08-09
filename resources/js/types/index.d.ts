@@ -104,10 +104,12 @@ export interface Kunjungan {
     id: number;
     pasien_id: number;
     poli_id: number;
+    petugas_id: number;
     tanggal_kunjungan: string;
     keluhan_utama: string;
     pasien: Pasien;
     poli: Poli;
+    petugas: Petugas;
     created_at: string;
     updated_at: string;
 }
