@@ -24,6 +24,12 @@ class RekamMedisController extends Controller
             });
         }
 
+        if (auth()->user()->role == 'medis') {
+            $query->whereHas('kunjungan.petugas', function ($q) {
+                $q->where('user_id', auth()->user()->id);
+            });
+        }
+
         $rekammedis = $query->latest()->paginate(10)->withQueryString();
 
         return Inertia::render("rekam-medis/index", [
@@ -52,7 +58,7 @@ class RekamMedisController extends Controller
         $validate_data = $request->validate([
             "kunjungan_id" => "required",
             "tekanan_darah" => "required",
-            "suhu" => "required|numeric",
+            "suhu" => "required|numeric|max:100",
             "diagnosa" => "required",
             "obat" => "required",
             "catatan" => "required",
@@ -96,7 +102,7 @@ class RekamMedisController extends Controller
         $rules = [
             "kunjungan_id" => "required",
             "tekanan_darah" => "required",
-            "suhu" => "required|numeric",
+            "suhu" => "required|numeric|max:100",
             "diagnosa" => "required",
             "obat" => "required",
             "catatan" => "required",
